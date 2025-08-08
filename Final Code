@@ -1,1 +1,7 @@
-
+these 2 are the final codes for the german traffic ligth system project 
+1. take the file on line 6 and add it to a folder 
+2. create a folder 'data' in the same folder that the file exists in
+3. add the file on line 7 to the 'data' folder 
+4. finally you can run file 1 which has C code in Arduino IDE and file 2 which has html,css and javascript will automatically work along side the ESP8266 microcontroller and LEDs
+https://github.com/anirrudhgg/German-traffic-light-system/blob/main/Final_Project_German_Traffic_Light.ino
+https://github.com/anirrudhgg/German-traffic-light-system/blob/main/index.html
