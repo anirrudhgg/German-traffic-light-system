@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatic Traffic Light</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --road-width: 150px;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            background: linear-gradient(to bottom, #87CEEB 0%, #aaddf0 50%, #66bb6a 50%, #55a05a 100%); /* Sky and Grass */
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .traffic-light-assembly {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pole {
+            width: 25px;
+            height: 350px;
+            background-color: #222;
+            border: 4px solid #111;
+            margin-top: -10px;
+        }
+        .traffic-light {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 10px;
+            border: 4px solid #111;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #444; /* Off state */
+            border: 2px solid #000;
+            /* Clicks are no longer needed */
+            cursor: default;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.5;
+        }
+        .light.on { opacity: 1; }
+        .light.red.on { background-color: #ff1c1c; box-shadow: 0 0 20px 5px #ff1c1c; }
+        .light.yellow.on { background-color: #ffdd00; box-shadow: 0 0 20px 5px #ffdd00; }
+        .light.green.on { background-color: #00ff6a; box-shadow: 0 0 20px 5px #00ff6a; }
+        @keyframes blink {
+            50% { opacity: 0.5; box-shadow: none; background-color: #444; }
+        }
+        .light.blinking {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="traffic-light-assembly">
+        <div id="traffic-light" class="traffic-light">
+            <div class="light red" data-color="red"></div>
+            <div class="light yellow" data-color="yellow"></div>
+            <div class="light green" data-color="green"></div>
+        </div>
+        <div class="pole"></div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trafficLight = document.getElementById('traffic-light');
+            const lights = {
+                red: trafficLight.querySelector('.red'),
+                yellow: trafficLight.querySelector('.yellow'),
+                green: trafficLight.querySelector('.green'),
+            };
+
+            // --- Core Functions ---
+            function clearAllLights() {
+                Object.values(lights).forEach(light => {
+                    light.classList.remove('on');
+                });
+            }
+
+            function setLightOn(color) {
+                if (lights[color]) {
+                    lights[color].classList.add('on');
+                }
+            }
+            
+            function initializeTrafficLight() {
+                clearAllLights();
+                setLightOn('red');
+            }
+
+            // --- Automatic Cycle Logic ---
+
+            function runTrafficLightCycle() {
+                // STATE: RED
+                // The cycle starts here, assuming the light is already Red.
+                // We hold the red light for 5 seconds before changing.
+                setTimeout(() => {
+                    
+                    // TRANSITION: Red -> Red+Yellow
+                    // Same as the original click logic, we add yellow.
+                    setLightOn('yellow');
+
+                    // This phase (Red+Yellow) lasts 1 second.
+                    // (Original was 1.5s from Red to Green, with Yellow turning on after 0.5s)
+                    setTimeout(() => {
+
+                        // STATE: GREEN
+                        clearAllLights();
+                        setLightOn('green');
+
+                        // Hold the green light for 5 seconds.
+                        setTimeout(() => {
+
+                            // TRANSITION: Green -> Yellow
+                            clearAllLights();
+                            setLightOn('yellow');
+
+                            // This phase (Yellow) lasts 1.5 seconds.
+                            // (Original was 2s from Green to Red, with Yellow turning on after 0.5s)
+                            setTimeout(() => {
+                                
+                                // STATE: RED & RESTART CYCLE
+                                clearAllLights();
+                                setLightOn('red');
+                                
+                                // Call the function again to create a loop
+                                runTrafficLightCycle();
+
+                            }, 1500); // Yellow duration
+
+                        }, 5000); // Green hold duration
+
+                    }, 1000); // Red+Yellow duration
+
+                }, 5000); // Red hold duration
+            }
+
+            // --- Initialization ---
+            initializeTrafficLight();
+            runTrafficLightCycle();
+        });
+    </script>
+
+</body>
+</html>
