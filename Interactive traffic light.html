@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Traffic Light</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --road-width: 150px;
+        }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            background: linear-gradient(to bottom, #87CEEB 0%, #aaddf0 50%, #66bb6a 50%, #55a05a 100%); /* Sky and Grass */
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- NEW STYLES START --- */
+        .traffic-light-assembly {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pole {
+            width: 25px;
+            height: 350px;
+            background-color: #222;
+            border: 4px solid #111;
+            /* The negative margin pulls the pole up behind the light */
+            margin-top: -10px;
+        }
+        /* --- NEW STYLES END --- */
+
+        .traffic-light {
+            background-color: #222;
+            padding: 15px;
+            border-radius: 10px;
+            border: 4px solid #111;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 20;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+        .light {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #444; /* Off state */
+            border: 2px solid #000;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            opacity: 0.5;
+        }
+        .light.on { opacity: 1; }
+        .light.red.on { background-color: #ff1c1c; box-shadow: 0 0 20px 5px #ff1c1c; }
+        .light.yellow.on { background-color: #ffdd00; box-shadow: 0 0 20px 5px #ffdd00; }
+        .light.green.on { background-color: #00ff6a; box-shadow: 0 0 20px 5px #00ff6a; }
+        @keyframes blink {
+            50% { opacity: 0.5; box-shadow: none; background-color: #444; }
+        }
+        .light.blinking {
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="traffic-light-assembly">
+        <div id="traffic-light" class="traffic-light">
+            <div class="light red" data-color="red"></div>
+            <div class="light yellow" data-color="yellow"></div>
+            <div class="light green" data-color="green"></div>
+        </div>
+        <div class="pole"></div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const trafficLight = document.getElementById('traffic-light');
+            const lights = {
+                red: trafficLight.querySelector('.red'),
+                yellow: trafficLight.querySelector('.yellow'),
+                green: trafficLight.querySelector('.green'),
+            };
+
+            let currentState = 'red';
+            let isTransitioning = false;
+            
+            function clearAllLights() {
+                isTransitioning = false;
+                Object.values(lights).forEach(light => {
+                    light.classList.remove('on', 'blinking');
+                });
+            }
+
+            function setLightOn(color) {
+                if (lights[color]) {
+                    lights[color].classList.add('on');
+                }
+            }
+            
+            function initializeTrafficLight() {
+                clearAllLights();
+                setLightOn('red');
+                currentState = 'red';
+            }
+
+            function handleYellowClick() {
+                console.log("Yellow light clicked. Activating blinking mode.");
+                clearAllLights();
+                currentState = 'blinking_yellow';
+                lights.yellow.classList.add('on', 'blinking');
+            }
+
+            function handleGreenClick() {
+                if ((currentState === 'red' || currentState === 'blinking_yellow') && !isTransitioning) {
+                    console.log("Green light clicked. Transitioning from Red to Green.");
+                    isTransitioning = true;
+                    
+                    // First, ensure we are in a clean red state visually
+                    initializeTrafficLight();
+                    
+                    setTimeout(() => {
+                        setLightOn('yellow');
+                        currentState = 'red-yellow';
+                        console.log("State: Red + Yellow");
+                    }, 500);
+
+                    setTimeout(() => {
+                        clearAllLights();
+                        setLightOn('green');
+                        currentState = 'green';
+                        console.log("State: Green");
+                    }, 1500);
+                }
+            }
+            
+            function handleRedClick() {
+                 if (currentState === 'green' && !isTransitioning) {
+                    console.log("Red light clicked while green. Transitioning from Green to Red.");
+                    isTransitioning = true;
+
+                    setTimeout(() => {
+                        clearAllLights();
+                        setLightOn('yellow');
+                        currentState = 'yellow';
+                        console.log("State: Yellow");
+                    }, 500);
+
+                    setTimeout(() => {
+                        clearAllLights();
+                        setLightOn('red');
+                        currentState = 'red';
+                        console.log("State: Red");
+                    }, 2000);
+                 } else {
+                     console.log("Red light clicked. No change.");
+                 }
+            }
+
+
+            // --- Main Event Listener (MODIFIED) ---
+            
+            trafficLight.addEventListener('click', (event) => {
+                const clickedColor = event.target.dataset.color;
+                if (!clickedColor || isTransitioning) {
+                    return; // Ignore clicks on the housing or during transitions
+                }
+
+                // Handle YELLOW click: always starts blinking mode if not already blinking
+                if (clickedColor === 'yellow') {
+                    if (currentState !== 'blinking_yellow') {
+                        handleYellowClick();
+                    }
+                    return;
+                }
+                
+                // Handle RED click
+                if (clickedColor === 'red') {
+                    if (currentState === 'blinking_yellow') {
+                        initializeTrafficLight(); // Stop blinking and go to solid red
+                    } else {
+                        handleRedClick(); // Transition from green or do nothing
+                    }
+                    return;
+                }
+
+                // Handle GREEN click
+                if (clickedColor === 'green') {
+                    if (currentState === 'red' || currentState === 'blinking_yellow') {
+                        handleGreenClick(); // Start the red-to-green sequence
+                    }
+                    // If already green, do nothing.
+                    return;
+                }
+            });
+
+            // --- Initialization ---
+            initializeTrafficLight();
+        });
+    </script>
+
+</body>
+</html>
