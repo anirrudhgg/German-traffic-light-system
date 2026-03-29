@@ -45,22 +45,35 @@ V. Installation
 
 VI. Features
 
-Authentic German traffic light sequences (including red+yellow transition)
-RESTful API:
-/ Web Interface
-/state GET current state
-/set POST to change state
-Real-time synchronization (500ms polling)
-Non-blocking state logic using millis()
-Decorative interface: animated clouds, sun, trees, and road
-Cross-device compatibility: use your phone, tablet, or computer
+1. Authentic German traffic light sequences (including red+yellow transition)
+
+2. RESTful API:
+
+3. / Web Interface
+
+4. /state GET current state
+
+5. /set POST to change state
+
+6. Real-time synchronization (500ms polling)
+
+7. Non-blocking state logic using millis()
+
+8. Decorative interface: animated clouds, sun, trees, and road
+
+9. Cross-device compatibility: use your phone, tablet, or computer
+
 
 VII. Usage
 
 Click light icons in the web interface to change states
+
 Automatic timing:
+
 Yellow: 2000ms
+
 Red+Yellow: 1500ms
+
 State and timing sync between board and browser in real time, accessible on any device
 
 VIII. Credits
