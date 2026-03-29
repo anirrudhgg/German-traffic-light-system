@@ -1,4 +1,4 @@
-German Traffic Light Control System
+#German Traffic Light Control System
 
 A web-controlled, German-style traffic light simulator using ESP8266 hardware and a modern web interface. Simulates authentic German traffic light sequences, including the unique red+yellow transition phase.
 The web interface is fully responsive—use it from any device, including smartphones, tablets, or desktop browsers.
