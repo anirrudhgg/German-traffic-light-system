@@ -31,12 +31,17 @@ Libraries: ESP8266WiFi, ESP8266WebServer, FS (SPIFFS)
 
 V. Installation
 
-Clone the repository git clone https://github.com/yohan-a/german-traffic-light.git
-Set WiFi credentials Open traffic_light.ino in the Arduino IDE and update your WiFi SSID and password.
-Upload the Sketch Upload traffic_light.ino to your ESP8266 board.
-Upload Web Interface to SPIFFS Use the Arduino IDE's “ESP8266 Sketch Data Upload” tool to upload index.html (and any assets) to SPIFFS.
-Start the System Open the Serial Monitor at 115200 baud to find the device’s IP address.
-Access the Web Interface Open the IP address shown in the Serial Monitor in your browser—compatible on desktop and mobile devices.
+1. Clone the repository git clone https://github.com/yohan-a/german-traffic-light.git
+
+2. Set WiFi credentials Open traffic_light.ino in the Arduino IDE and update your WiFi SSID and password.
+
+3. Upload the Sketch Upload traffic_light.ino to your ESP8266 board.
+
+4. Upload Web Interface to SPIFFS Use the Arduino IDE's “ESP8266 Sketch Data Upload” tool to upload index.html (and any assets) to SPIFFS.
+
+5. Start the System Open the Serial Monitor at 115200 baud to find the device’s IP address.
+
+6. Access the Web Interface Open the IP address shown in the Serial Monitor in your browser—compatible on desktop and mobile devices.
 
 VI. Features
 
